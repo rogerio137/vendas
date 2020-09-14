@@ -5,6 +5,7 @@ import br.github.rogerioortiz.domain.entity.Cliente;
 import br.github.rogerioortiz.domain.entity.ItemPedido;
 import br.github.rogerioortiz.domain.entity.Pedido;
 import br.github.rogerioortiz.domain.entity.Produto;
+import br.github.rogerioortiz.domain.enums.StatusPedido;
 import br.github.rogerioortiz.domain.repository.Clientes;
 import br.github.rogerioortiz.domain.repository.ItemsPedidos;
 import br.github.rogerioortiz.domain.repository.Pedidos;
@@ -42,6 +43,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemsPedidos = converterItems(pedido, dto.getItems());
         repository.save(pedido);
