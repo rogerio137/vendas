@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
-@Table(name = "cliente")
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "cliente")
 public class Cliente {
 
     @Id
@@ -34,4 +35,5 @@ public class Cliente {
         this.id = id;
         this.nome = nome;
     }
+
 }
