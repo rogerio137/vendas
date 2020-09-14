@@ -10,12 +10,14 @@ import br.github.rogerioortiz.domain.repository.Clientes;
 import br.github.rogerioortiz.domain.repository.ItemsPedidos;
 import br.github.rogerioortiz.domain.repository.Pedidos;
 import br.github.rogerioortiz.domain.repository.Produtos;
+import br.github.rogerioortiz.exception.PedidoNaoEncontradoException;
 import br.github.rogerioortiz.exception.RegraNegocioException;
 import br.github.rogerioortiz.rest.dto.ItemPedidoDTO;
 import br.github.rogerioortiz.rest.dto.PedidoDTO;
 import br.github.rogerioortiz.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,6 +58,17 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public Optional<Pedido> obterPedidoCompleto(Integer id) {
         return repository.findByIdFetchItems(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        repository
+                .findById(id)
+                .map(pedido -> {
+                    pedido.setStatus(statusPedido);
+                    return repository.save(pedido);
+                }).orElseThrow(() -> new PedidoNaoEncontradoException());
     }
 
 
