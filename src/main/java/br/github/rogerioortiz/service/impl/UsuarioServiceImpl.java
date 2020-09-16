@@ -1,5 +1,7 @@
 package br.github.rogerioortiz.service.impl;
 
+import br.github.rogerioortiz.domain.entity.Usuario;
+import br.github.rogerioortiz.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,19 +14,30 @@ import org.springframework.stereotype.Service;
 public class UsuarioServiceImpl implements UserDetailsService {
 
     @Autowired
-    PasswordEncoder encoder;
+    private PasswordEncoder encoder;
+
+    @Autowired
+    private UsuarioRepository repository;
+
+    public Usuario salvar(Usuario usuario){
+        return repository.save(usuario);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(!username.equals("cicrano")){
-            throw new UsernameNotFoundException("Usuário não encotnrado na base");
-        }
+        Usuario usuario = repository
+                                .findByLogin(username)
+                                .orElseThrow(() ->
+                                     new UsernameNotFoundException("Usuário não encontrado na base de dados."));
+
+        String[] roles = usuario.isAdmin() ?
+                new String[]{"ADMIN","USER"} : new String[]{"USER"};
 
         return User
                 .builder()
-                .username("cicrano")
-                .password(encoder.encode("123"))
-                .roles("USER","ADMIN")
+                .username(usuario.getLogin())
+                .password(usuario.getSenha())
+                .roles(roles)
                 .build();
     }
 }
